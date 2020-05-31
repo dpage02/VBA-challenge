@@ -1,0 +1,102 @@
+Start = ws.Cells(2, 3).Value
+        For i = 2 To lastrow
+            If ws.Cells(i + 1, 1).Value <> ws.Cells(i, 1).Value Then
+            
+                'getting ticker
+                ticker = ws.Cells(i, 1).Value
+                ws.Range("J" & sumRow).Value = ticker
+                
+                'getting start, closed, and change
+                closed = ws.Cells(i, 6).Value
+                ychanged = closed - Start
+                ws.Range("k" & sumRow).Value = ychanged
+            
+                
+                'getting percent change
+                If (ychanged = 0 And Start = 0) Then
+                    pchanged = 0
+                ElseIf (Start = 0) Then
+                    pchanged = 1
+                Else
+                    pchanged = (ychanged / Start)
+                End If
+                ws.Range("L" & sumRow).Value = pchanged
+                ws.Range("L" & sumRow).NumberFormat = "0.00%"
+              
+                'conditional format
+                If pchanged >= 0 Then
+                    ws.Range("L" & sumRow).Interior.Color = vbGreen
+                Else
+                    ws.Range("L" & sumRow).Interior.Color = vbRed
+                End If
+                
+                'get volume and print into cell
+                volume_total = volume_total + ws.Cells(i, 7).Value
+                ws.Range("M" & sumRow).Value = volume_total
+                
+                'move to next iteration, set total to 0
+                Start = ws.Cells(i + 1, 3).Value
+                sumRow = sumRow + 1
+                volume_total = 0
+            Else
+                volume_total = volume_total + ws.Cells(i, 7).Value
+            End If
+            
+     
+        Next i
+        sumRow = 2
+        
+        
+        
+        Range("O2").Value = "Greatest % Increase"
+        Range("o3").Value = "Greatest % Decrease"
+        Range("O4").Value = "Greatest Total Volume"
+        Range("P1").Value = "Ticker"
+        Range("Q1").Value = "Value"
+        
+        'get last row of each on each workheet
+        lastrow_ticker = ws.Cells(Rows.Count, 12).End(xlUp).Row
+        
+       Set R = ws.Range("L2:L" & lastrow_ticker)
+       Set x = ws.Range("M2:M" & lastrow_ticker)
+       For i = 2 To lastrow_ticker
+            'greatest increase
+            greatest_inc = Application.WorksheetFunction.Max(R)
+            ws.Range("q" & sumRow).Value = greatest_inc
+            If ws.Cells(i, 12) = greatest_inc Then
+                ticker_inc = ws.Cells(i, 10).Value
+                ws.Range("p" & sumRow).Value = ticker_inc
+            End If
+            
+            ws.Range("q" & sumRow).NumberFormat = "0.00%"
+            
+            'greatest decrease
+            greatest_dec = Application.WorksheetFunction.Min(R)
+            ws.Range("q" & sumRow + 1).Value = greatest_dec
+            ws.Range("q" & sumRow + 1).NumberFormat = "0.00%"
+            If ws.Cells(i, 12).Value = greatest_dec Then
+                ticker_dec = ws.Cells(i, 10).Value
+                ws.Range("p" & sumRow + 1).Value = ticker_dec
+           End If
+
+            
+            'largetst volume
+            greatest_total = Application.WorksheetFunction.Max(x)
+            ws.Range("q" & sumRow + 2).Value = greatest_total
+            If ws.Cells(i, 13).Value = greatest_total Then
+                ticker_total = ws.Cells(i, 10).Value
+                ws.Range("p" & sumRow + 2).Value = ticker_total
+           End If
+
+       Next i
+       
+        'Have best fit
+        Columns.AutoFit
+   
+
+    Next ws
+End Sub
+
+
+
+
