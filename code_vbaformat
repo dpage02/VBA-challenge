@@ -1,4 +1,20 @@
-Start = ws.Cells(2, 3).Value
+Sub stocks2()
+
+     Dim ticker As String
+     Dim sumRow As Integer
+     Dim ychanged, Start, closed, pchanged As Double
+     volume As Long
+     
+     lastrow = Cells(Rows.Count, 1).End(xlUp).Row
+     sumRow = 2
+     volume = 0
+
+    Cells(1, 10).Value = "Ticker"
+    Cells(1, 11).Value = "Yearly Change"
+    Cells(1, 12).Value = "Percent change"
+    Cells(1, 13).Value = "Total Stock Volume"
+    
+   Start = ws.Cells(2, 3).Value
         For i = 2 To lastrow
             If ws.Cells(i + 1, 1).Value <> ws.Cells(i, 1).Value Then
             
